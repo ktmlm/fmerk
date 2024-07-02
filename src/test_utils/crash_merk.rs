@@ -26,7 +26,7 @@ impl CrashMerk {
     }
 
     pub fn crash(&mut self) -> Result<()> {
-        drop(self.inner.take().unwrap());
+        drop(std::mem::ManuallyDrop::into_inner(self.inner.take().unwrap()));
 
         // rename to invalidate rocksdb's lock
         let file_name = format!(

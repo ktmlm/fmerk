@@ -86,7 +86,7 @@ impl Merk {
     /// clean all auxiliary key\value.
     pub fn clean_aux(&self) -> Result<()> {
         let aux_cf = self.db.cf_handle("aux");
-        for (k, _) in self.db.iterator_cf(aux_cf.unwrap(), IteratorMode::Start) {
+        for (k, _) in self.db.iterator_cf(aux_cf.unwrap(), IteratorMode::Start).map(|i| i.unwrap()) {
             self.db.delete_cf(aux_cf.unwrap(), k)?;
         }
         Ok(())
@@ -286,7 +286,7 @@ impl Merk {
     /// cs: Export of the target object
     pub fn export_aux(&mut self,cs: &mut Self) -> Result<()>{
         let  aux_cf = self.db.cf_handle("aux").unwrap();
-        for (k, v) in self.db.iterator_cf(aux_cf, IteratorMode::Start) {
+        for (k, v) in self.db.iterator_cf(aux_cf, IteratorMode::Start).map(|i| i.unwrap()) {
             let expected = vec![
                 (k.to_vec().clone(), Op::Put(v.to_vec().clone())),
             ];
